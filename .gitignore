@@ -1,0 +1,18 @@
+# macOS system files
+.DS_Store
+
+# Python virtual environment
+myenv/
+
+# Python cache files
+__pycache__/
+
+# Output folder
+output/
+
+# Ignore all .log files
+*.log
+
+# Ignore any other environment or generated files
+*.env
+
