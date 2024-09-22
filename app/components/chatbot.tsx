@@ -38,10 +38,12 @@ export default function Chatbot() {
   }, [messages]);
 
   return (
-    <div className="flex flex-col h-screen bg-background">
-      <header className="flex items-center justify-between p-4 border-b">
+    <div className="flex flex-col h-full">
+		{/* <div className="flex flex-col bg-background"> */}
+      {/* <header className="flex items-center justify-between p-4 border-b">
         <h1 className="font-heading text-2xl font-bold text-primary">DegenGPT</h1>
-      </header>
+				<Button>Home</Button>
+      </header> */}
       <ScrollArea className="flex-grow p-4" ref={scrollAreaRef}>
         {messages.map((message, index) => (
           <div key={index} className={`flex items-start mb-4 ${message.role === "user" ? "justify-end" : "justify-start"}`}>
