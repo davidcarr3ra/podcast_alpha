@@ -3,12 +3,15 @@
 
 # Python virtual environment
 myenv/
+backend_env/
 
 # Python cache files
 __pycache__/
 
-# Output folder
+# Output folders/files
 output/
+chroma_db/
+processed_files.txt
 
 # Ignore all .log files
 *.log

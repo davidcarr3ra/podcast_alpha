@@ -3,11 +3,9 @@ import Link from 'next/link';
 
 import {
   NavigationMenu,
-  // NavigationMenuContent,
   NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuList,
-  // NavigationMenuTrigger,
   navigationMenuTriggerStyle,
 } from '@/components/ui/navigation-menu';
 
@@ -18,7 +16,7 @@ export default function NavBar() {
     <NavigationMenu className="z-[5] justify-between">
       <NavigationMenuList className="w-full">
 				<NavigationMenuItem>
-					<Link href="https://ui.shadcn.com/docs" legacyBehavior passHref>
+					<Link href="/" legacyBehavior passHref>
 						<NavigationMenuLink className={navigationMenuTriggerStyle()}>
 							<span className="m750:max-w-[80px] m750:text-xs">
 								DegenRadar
