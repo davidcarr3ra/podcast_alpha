@@ -1,23 +1,20 @@
 import os
-from langchain_huggingface import HuggingFaceEmbeddings
-from langchain_chroma import Chroma
-from langchain.schema import Document
+import requests
+import uuid
+from dotenv import load_dotenv
+from utils import UPLOAD_URL, get_access_token, boundary
+
+# Load environment variables from .env file
+load_dotenv()
+
 
 print("Starting embedding generation process...")
-
-# Define the embedding model
-embedding_model = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
-print("Embedding model initialized.")
 
 # Path to your transcript directories
 base_dir = "../output"
 
 # Define directory to save Chroma embeddings
 persist_dir = "chroma_db"
-
-# Initialize Chroma DB
-db = Chroma(persist_directory=persist_dir, embedding_function=embedding_model)
-print(f"Chroma DB initialized with persist directory: {persist_dir}")
 
 # File to track processed transcripts
 processed_files_path = "processed_files.txt"
@@ -28,6 +25,37 @@ if os.path.exists(processed_files_path):
         processed_files = set(f.read().splitlines())
 else:
     processed_files = set()
+
+def upload_file(file_path):
+    access_token = get_access_token()
+    print(access_token)
+
+    headers = {
+        'Authorization': f'Bearer {access_token}',
+        'Content-Type': f"multipart/form-data; boundary={boundary}",
+        'Accept': 'application/json',
+    }
+
+    with open(file_path, "rb") as binary_file:
+        payload = (
+            f"--{boundary}\r\n"
+            f"Content-Disposition: form-data; name=\"file\"; filename=\"{file_path.removeprefix('../').split('/')[1]+'_'+str(uuid.uuid4())}\"\r\n"
+            "\r\n"
+            f"{binary_file.read()}\r\n"
+            f"--{boundary}--\r\n"
+        )
+
+        print(payload)
+
+        print(f"Uploading file: {file_path}")
+
+        response = requests.post(UPLOAD_URL, headers=headers, data=payload.encode('utf-8'))
+
+        if response.status_code == 201:
+            print(f"Successfully uploaded {file_path}")
+        else:
+            print(f"Failed to index {file_path}. Status code: {response.status_code}, Response: {response.text}")
+
 
 def process_podcast_transcripts():
     total_podcasts = 0
@@ -44,12 +72,13 @@ def process_podcast_transcripts():
                     new_transcripts += 1
                     total_transcripts += 1
                     print(f"  Processing new transcript: {transcript_file}")
-                    with open(os.path.join(podcast_path, transcript_file), 'r', encoding='utf-8') as f:
-                        content = f.read()
-                        # Wrap the content in a Document object
-                        document = Document(page_content=content)
-                        # Add the document to the database
-                        db.add_documents([document])
+                    upload_file(os.path.join(podcast_path, transcript_file))
+                    # with open(os.path.join(podcast_path, transcript_file), 'r', encoding='utf-8') as f:
+                    #     content = f.read()
+                    #     # Wrap the content in a Document object
+                    #     document = Document(page_content=content)
+                    #     # Add the document to the database
+                    #     db.add_documents([document])
 
                     # Add the file to processed list
                     with open(processed_files_path, "a") as f:
