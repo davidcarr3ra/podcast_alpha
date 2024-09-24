@@ -3,11 +3,10 @@
 # from langchain_huggingface import HuggingFaceEmbeddings
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from openai import OpenAI
 from datetime import datetime
 import requests
 
-from utils import get_access_token, boundary, QUERY_URL
+from utils import get_access_token, QUERY_URL
 
 # client = OpenAI()
 app = FastAPI()
@@ -24,6 +23,7 @@ app.add_middleware(
 # embedding_model = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
 # db = Chroma(persist_directory="chroma_db", embedding_function=embedding_model)
 
+## TODO: use this https://docs.vectara.com/docs/rest-api/query-corpus
 def query_vectara(query):
 	access_token = get_access_token()
 	headers = {
